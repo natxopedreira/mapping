@@ -68,7 +68,7 @@ public:
     int drawMode;
     
     ofxPanel gui;
-    ofxToggle setupMode, savecalibration, highlight, useSmoothing, randomLighting, useLights, faces, fullWireframe, outlineWireframe, occludedWireframe, useShader;
+    ofxToggle setupMode, savecalibration, highlight, useSmoothing, randomLighting, useLights, faces, fullWireframe, outlineWireframe, occludedWireframe, useShader, verEjes;
     ofxFloatSlider scale,  highlightPosition, highlightOffset, lightX, lightY, lightZ, slowLerpRate, fastLerpRate;
     ofxIntSlider lineWidth, backGroundColor, screenPointSize, selectedPointSize, selectionRadius, aov;
     

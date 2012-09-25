@@ -50,6 +50,8 @@ void testApp::setupControlPanel() {
     gui.add(useLights.setup("useLights", false));
     gui.add(randomLighting.setup("randomLighting", false));
     gui.add(useShader.setup("useShader", false));
+    gui.add(verEjes.setup("verEjes", true));
+    
     
     
     gui.add(faces.setup("faces", false));
@@ -423,8 +425,11 @@ void testApp::drawLabeledPoint(int label, ofVec2f position, ofColor color, ofCol
 void testApp::drawSelectionMode() {
 	ofSetColor(255);
 	cam.begin();
-    ofSetColor(255,100,100,180);
-    drawGrid(100.0f, 10.0f, false, true, true,true);
+    
+    if(verEjes){
+        ofSetColor(255,100,100,180);
+        drawGrid(100.0f, 10.0f, false, true, true,true);
+    }
     ofSetColor(255,255,255,255);
 	ofScale(scale, scale, scale);
 	
