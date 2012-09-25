@@ -30,6 +30,8 @@ public:
     void fullWireframePressed(bool & pressed);
     void outlineWireframePressed(bool & pressed);
     void occludedWireframePressed(bool & pressed);
+    void drawGrid(float scale, float ticks, bool labels, bool x, bool y, bool z);
+    void drawGridPlane(float scale, float ticks, bool labels);
     //  GUI
     //  --------------------------------
 	void    setupControlPanel();

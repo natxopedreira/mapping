@@ -6,11 +6,12 @@ using namespace cv;
 //------------------------------------------------------------------------- SETUP
 void testApp::setup() {
 	ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL_BILLBOARD);
+    ofEnableAlphaBlending();
     
 	ofSetVerticalSync(true);
 	calibrationReady = false;
     
-	loadMesh("EscenarioEleccionesNacho.dae");
+	loadMesh("EscenarioEleccionesNacho.obj");
     
 	setupControlPanel();
     
@@ -34,6 +35,8 @@ void testApp::setup() {
     cvCALIB_ZERO_TANGENT_DIST = true;
     cvCALIB_FIX_PRINCIPAL_POINT = false;
 }
+
+
 
 void testApp::setupControlPanel() {
     
@@ -240,10 +243,10 @@ void testApp::update() {
 	light.setPosition(lightX,lightY, lightZ);
 		
 	if(selectionMode) {
-		cam.enableMouseInput();
+		//cam.enableMouseInput();
 	} else {
 		updateRenderMode();
-		cam.disableMouseInput();
+		//cam.disableMouseInput();
 	}
 }
 
@@ -420,6 +423,9 @@ void testApp::drawLabeledPoint(int label, ofVec2f position, ofColor color, ofCol
 void testApp::drawSelectionMode() {
 	ofSetColor(255);
 	cam.begin();
+    ofSetColor(255,100,100,180);
+    drawGrid(100.0f, 10.0f, false, true, true,true);
+    ofSetColor(255,255,255,255);
 	ofScale(scale, scale, scale);
 	
 	render();
@@ -610,6 +616,7 @@ void testApp::keyPressed(int key) {
 	if(key == 'l') {
 		gui.loadFromFile("settings.xml");
 	}
+
 }
 
 void testApp::mousePressed(int x, int y, int button) {
@@ -622,4 +629,83 @@ void testApp::mousePressed(int x, int y, int button) {
 
 void testApp::mouseReleased(int x, int y, int button) {
 	dragging = false;
+}
+
+
+void testApp::drawGrid(float scale, float ticks, bool labels, bool x, bool y, bool z) {
+	
+	ofColor c = ofGetStyle().color;
+	
+	ofPushStyle();
+	
+	if (x) {
+		c.setHue(0.0f);
+		ofSetColor(c);
+		drawGridPlane(scale, ticks, labels);
+	}
+	if (y) {
+		c.setHue(255.0f / 3.0f);
+		ofSetColor(c);
+		ofPushMatrix();
+		ofRotate(90, 0, 0, 1);
+		drawGridPlane(scale, ticks, labels);
+		ofPopMatrix();
+	}
+	if (z) {
+		c.setHue(255.0f * 2.0f / 3.0f);
+		ofSetColor(c);
+		ofPushMatrix();
+		ofRotate(90, 0, 1, 0);
+		drawGridPlane(scale, ticks, labels);
+		ofPopMatrix();
+	}
+	
+	ofPopStyle();
+}
+
+
+//-------------------------------------------------------------- GRID 
+void testApp::drawGridPlane(float scale, float ticks, bool labels) {
+    
+	float minor = scale / ticks;
+	float major =  minor * 2.0f;
+	
+	ofPushStyle();
+	for (int iDimension=0; iDimension<2; iDimension++)
+	{
+		for (float yz=-scale; yz<=scale; yz+= minor)
+		{
+			//major major
+			if (fabs(yz) == scale || yz == 0)
+				ofSetLineWidth(1);
+			
+			//major
+			else if (yz / major == floor(yz / major) )
+				ofSetLineWidth(1);
+			
+			//minor
+			else
+				ofSetLineWidth(1);
+			if (iDimension==0)
+				ofLine(0, yz, -scale, 0, yz, scale);
+			else
+				ofLine(0, -scale, yz, 0, scale, yz);
+		}
+	}
+	ofPopStyle();
+	
+	if (labels) {
+		//draw numbers on axes
+		ofPushStyle();
+		ofSetColor(255, 255, 255);
+		
+		ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL_BILLBOARD);
+		for (float yz = -scale; yz<=scale; yz+=minor)
+		{
+			ofDrawBitmapString(ofToString(yz, 0), 0, yz, 0);
+			ofDrawBitmapString(ofToString(yz, 0), 0, 0, yz);		
+		}
+		ofPopStyle();
+	}
+    
 }
