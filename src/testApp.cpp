@@ -10,62 +10,72 @@ void testApp::setup() {
 	ofSetVerticalSync(true);
 	calibrationReady = false;
     
-	loadMesh("model.dae");
+	loadMesh("EscenarioEleccionesNacho.dae");
     
 	setupControlPanel();
     
     video.initGrabber(640,480);
+    
+    validShader = true;
+    selectionMode = true;
+    hoverSelected = false;
+    selectedVert = false;
+    dragging = false;
+    arrowing = false;
+    
+    fullWireframe = false;
+    outlineWireframe = false;
+    occludedWireframe = true;
+    
+    cvCALIB_FIX_ASPECT_RATIO = true;
+    cvCALIB_FIX_K1 = true;
+    cvCALIB_FIX_K2 = true;
+    cvCALIB_FIX_K3 = true;
+    cvCALIB_ZERO_TANGENT_DIST = true;
+    cvCALIB_FIX_PRINCIPAL_POINT = false;
 }
 
 void testApp::setupControlPanel() {
-	panel.setup();
-	panel.msg = "tab hides the panel, space toggles render/selection mode, 'f' toggles fullscreen.";
-	
-	panel.addPanel("Interaction");
-	panel.addToggle("setupMode", true);
-	panel.addSlider("scale", 1, .1, 25);
-	panel.addSlider("backgroundColor", 0, 0, 255, true);
-	panel.addMultiToggle("drawMode", 3, variadic("faces")("fullWireframe")("outlineWireframe")("occludedWireframe"));
-	panel.addMultiToggle("shading", 0, variadic("none")("lights")("shader"));
-	panel.addToggle("saveCalibration", false);
-	
-	panel.addPanel("Highlight");
-	panel.addToggle("highlight", false);
-	panel.addSlider("highlightPosition", 0, 0, 1);
-	panel.addSlider("highlightOffset", .1, 0, 1);
-	
-	panel.addPanel("Calibration");
-	panel.addSlider("aov", 80, 50, 100);
-	panel.addToggle("CV_CALIB_FIX_ASPECT_RATIO", true);
-	panel.addToggle("CV_CALIB_FIX_K1", true);
-	panel.addToggle("CV_CALIB_FIX_K2", true);
-	panel.addToggle("CV_CALIB_FIX_K3", true);
-	panel.addToggle("CV_CALIB_ZERO_TANGENT_DIST", true);
-	panel.addToggle("CV_CALIB_FIX_PRINCIPAL_POINT", false);
-	
-	panel.addPanel("Rendering");
-	panel.addSlider("lineWidth", 2, 1, 8, true);
-	panel.addToggle("useSmoothing", false);
-	panel.addSlider("screenPointSize", 2, 1, 16, true);
-	panel.addSlider("selectedPointSize", 8, 1, 16, true);
-	panel.addSlider("selectionRadius", 12, 1, 32);
-	panel.addSlider("lightX", 200, -1000, 1000);
-	panel.addSlider("lightY", 400, -1000, 1000);
-	panel.addSlider("lightZ", 800, -1000, 1000);
-	panel.addToggle("randomLighting", false);
-	
-	panel.addPanel("Internal");
-	panel.addToggle("validShader", true);
-	panel.addToggle("selectionMode", true);
-	panel.addToggle("hoverSelected", false);
-	panel.addSlider("hoverChoice", 0, 0, objectPoints.size(), true);
-	panel.addToggle("selected", false);
-	panel.addToggle("dragging", false);
-	panel.addToggle("arrowing", false);
-	panel.addSlider("selectionChoice", 0, 0, objectPoints.size(), true);
-	panel.addSlider("slowLerpRate", .001, 0, .01);
-	panel.addSlider("fastLerpRate", 1, 0, 1);
+    
+    ///////////
+    gui.setup("controles");
+    gui.add(setupMode.setup("setupMode", true));
+    gui.add(savecalibration.setup("savecalibration", false));
+    gui.add(highlight.setup("highlight", false));
+    gui.add(useSmoothing.setup("useSmoothing", false));
+    
+    gui.add(useLights.setup("useLights", false));
+    gui.add(randomLighting.setup("randomLighting", false));
+    gui.add(useShader.setup("useShader", false));
+    
+    
+    gui.add(faces.setup("faces", false));
+    gui.add(fullWireframe.setup("fullWireframe", false));
+    gui.add(outlineWireframe.setup("outlineWireframe", false));
+    gui.add(occludedWireframe.setup("occludedWireframe", true));
+    faces.addListener(this,&testApp::facesPressed);
+    fullWireframe.addListener(this,&testApp::fullWireframePressed);
+    outlineWireframe.addListener(this,&testApp::outlineWireframePressed);
+    occludedWireframe.addListener(this,&testApp::occludedWireframePressed);
+    
+    gui.add(scale.setup("scale", 1, .1, 25));
+    gui.add(backGroundColor.setup("backgroundColor", 0, 0, 255));
+    gui.add(highlightPosition.setup("highlightPosition",  0, 0, 1));
+    gui.add(highlightOffset.setup("highlightOffset",  .1, 0, 1));
+    gui.add(aov.setup("aov", 80, 50, 100));
+    gui.add(lineWidth.setup("lineWidth", 2, 1, 8));
+    gui.add(screenPointSize.setup("screenPointSize", 2, 1, 16));
+    gui.add(selectedPointSize.setup("selectedPointSize", 8, 1, 16));
+    gui.add(selectionRadius.setup("selectionRadius", 12, 1, 32));
+    gui.add(lightX.setup("lightX", 200.0, -1000.0, 1000.0));
+    gui.add(lightY.setup("lightY", 400.0, -1000.0, 1000.0));
+    gui.add(lightZ.setup("lightZ", 800.0, -1000.0, 1000.0));
+    
+    gui.add(slowLerpRate.setup("slowLerpRate", .001, 0, .01));
+    gui.add(fastLerpRate.setup("fastLerpRate", 1., 0, 1.));
+
 }
+
 
 void testApp::loadMesh(string _daeModel){
     ofxAssimpModelLoader model;
@@ -222,14 +232,14 @@ void testApp::update() {
     
     video.update();
     
-    if(getb("randomLighting")) {
-		setf("lightX", ofSignedNoise(ofGetElapsedTimef(), 1, 1) * 1000);
-		setf("lightY", ofSignedNoise(1, ofGetElapsedTimef(), 1) * 1000);
-		setf("lightZ", ofSignedNoise(1, 1, ofGetElapsedTimef()) * 1000);
+    if(randomLighting) {
+        lightX = ofSignedNoise(ofGetElapsedTimef(), 1, 1) * 1000;
+        lightY = ofSignedNoise(1, ofGetElapsedTimef(), 1) * 1000;
+        lightZ = ofSignedNoise(1, 1, ofGetElapsedTimef()) * 1000;
 	}
-	light.setPosition(getf("lightX"), getf("lightY"), getf("lightZ"));
+	light.setPosition(lightX,lightY, lightZ);
 		
-	if(getb("selectionMode")) {
+	if(selectionMode) {
 		cam.enableMouseInput();
 	} else {
 		updateRenderMode();
@@ -239,7 +249,7 @@ void testApp::update() {
 
 void testApp::updateRenderMode() {
 	// generate camera matrix given aov guess
-	float aov = getf("aov");
+	//float aov = getf("aov");
 	Size2i imageSize(ofGetWidth(), ofGetHeight());
 	float f = imageSize.width * ofDegToRad(aov); // i think this is wrong, but it's optimized out anyway
 	Point2f c = Point2f(imageSize) * (1. / 2);
@@ -249,15 +259,16 @@ void testApp::updateRenderMode() {
                           0, 0, 1);
     
 	// generate flags
-#define getFlag(flag) (panel.getValueB((#flag)) ? flag : 0)
+//#define getFlag(flag) (panel.getValueB((#flag)) ? flag : 0)
 	int flags =
     CV_CALIB_USE_INTRINSIC_GUESS |
-    getFlag(CV_CALIB_FIX_PRINCIPAL_POINT) |
-    getFlag(CV_CALIB_FIX_ASPECT_RATIO) |
-    getFlag(CV_CALIB_FIX_K1) |
-    getFlag(CV_CALIB_FIX_K2) |
-    getFlag(CV_CALIB_FIX_K3) |
-    getFlag(CV_CALIB_ZERO_TANGENT_DIST);
+    cvCALIB_FIX_PRINCIPAL_POINT |
+    cvCALIB_FIX_ASPECT_RATIO |
+    cvCALIB_FIX_K1 |
+    cvCALIB_FIX_K2 |
+    cvCALIB_FIX_K3 |
+    cvCALIB_ZERO_TANGENT_DIST;
+    
 	
 	vector<Mat> rvecs, tvecs;
 	Mat distCoeffs;
@@ -284,17 +295,17 @@ void testApp::updateRenderMode() {
 }
 
 void testApp::draw() {
-	ofBackground( geti("backgroundColor") );
-	if( getb("saveCalibration") ) {
+	ofBackground(backGroundColor);
+	if(savecalibration) {
 		saveCalibration( "calibration-" + ofGetTimestampString() + "/" );
-		setb("saveCalibration", false);
+		savecalibration = false;
 	}
-	if(getb("selectionMode")) {
+	if(selectionMode) {
 		drawSelectionMode();
 	} else {
 		drawRenderMode();
 	}
-	if(!getb("validShader")) {
+	if(!validShader) {
 		ofPushStyle();
 		ofSetColor(magentaPrint);
 		ofSetLineWidth(8);
@@ -308,19 +319,19 @@ void testApp::draw() {
 		drawHighlightString(message, center);
 		ofPopStyle();
 	}
+    
+    gui.draw();
 }
 
 void testApp::render() {
 	ofPushStyle();
-	ofSetLineWidth(geti("lineWidth"));
-	if(getb("useSmoothing")) {
+	ofSetLineWidth(lineWidth);
+	if(useSmoothing) {
 		ofEnableSmoothing();
 	} else {
 		ofDisableSmoothing();
 	}
-	int shading = geti("shading");
-	bool useLights = shading == 1;
-	bool useShader = shading == 2;
+
 	if(useLights) {
 		light.enable();
 		ofEnableLighting();
@@ -328,11 +339,11 @@ void testApp::render() {
 		glEnable(GL_NORMALIZE);
 	}
 	
-	if(getb("highlight")) {
+	if(highlight) {
 		objectMesh.clearColors();
 		int n = objectMesh.getNumVertices();
-		float highlightPosition = getf("highlightPosition");
-		float highlightOffset = getf("highlightOffset");
+		float highlightPosition = highlightPosition;
+		float highlightOffset = highlightOffset;
 		for(int i = 0; i < n; i++) {
 			int lower = ofMap(highlightPosition - highlightOffset, 0, 1, 0, n);
 			int upper = ofMap(highlightPosition + highlightOffset, 0, 1, 0, n);
@@ -349,8 +360,7 @@ void testApp::render() {
 		Poco::Timestamp fragTimestamp = fragFile.getPocoFile().getLastModified();
 		Poco::Timestamp vertTimestamp = vertFile.getPocoFile().getLastModified();
 		if(fragTimestamp != lastFragTimestamp || vertTimestamp != lastVertTimestamp) {
-			bool validShader = shader.load("shader");
-			setb("validShader", validShader);
+			validShader = shader.load("shader");
 		}
 		lastFragTimestamp = fragTimestamp;
 		lastVertTimestamp = vertTimestamp;
@@ -361,7 +371,8 @@ void testApp::render() {
 		shader.end();
 	}
 	ofColor transparentBlack(0, 0, 0, 0);
-	switch(geti("drawMode")) {
+    
+	switch(drawMode) {
 		case 0: // faces
 			if(useShader) shader.begin();
 			glEnable(GL_CULL_FACE);
@@ -401,7 +412,7 @@ void testApp::drawLabeledPoint(int label, ofVec2f position, ofColor color, ofCol
 	ofSetLineWidth(1.5);
 	ofLine(position - ofVec2f(w,0), position + ofVec2f(w,0));
 	ofLine(position - ofVec2f(0,h), position + ofVec2f(0,h));
-	ofCircle(position, geti("selectedPointSize"));
+	ofCircle(position, selectedPointSize);
 	drawHighlightString(ofToString(label), position + tooltipOffset, bg, fg);
 	glPopAttrib();
 }
@@ -409,19 +420,18 @@ void testApp::drawLabeledPoint(int label, ofVec2f position, ofColor color, ofCol
 void testApp::drawSelectionMode() {
 	ofSetColor(255);
 	cam.begin();
-	float scale = getf("scale");
 	ofScale(scale, scale, scale);
 	
 	render();
     
-	if(getb("setupMode")) {
+	if(setupMode) {
 		imageMesh = getProjectedMesh(objectMesh);
 	}
 	cam.end();
 	
-	if(getb("setupMode")) {
+	if(setupMode) {
 		// draw all points cyan small
-		glPointSize(geti("screenPointSize"));
+		glPointSize(screenPointSize);
 		glEnable(GL_POINT_SMOOTH);
 		ofSetColor(cyanPrint);
 		imageMesh.drawVertices();
@@ -439,17 +449,17 @@ void testApp::drawSelectionMode() {
 		int choice;
 		float distance;
 		ofVec3f selected = getClosestPointOnMesh(imageMesh, mouseX, mouseY, &choice, &distance);
-		if(!ofGetMousePressed() && distance < getf("selectionRadius")) {
-			seti("hoverChoice", choice);
-			setb("hoverSelected", true);
+		if(!ofGetMousePressed() && distance < selectionRadius) {
+			hoverChoice = choice;
+			hoverSelected = true;
 			drawLabeledPoint(choice, selected, magentaPrint);
 		} else {
-			setb("hoverSelected", false);
+            hoverSelected = false;
 		}
 		
 		// draw selected point yellow
-		if(getb("selected")) {
-			int choice = geti("selectionChoice");
+		if(selectedVert) {
+			int choice = selectionChoice;
 			ofVec2f selected = imageMesh.getVertex(choice);
 			drawLabeledPoint(choice, selected, yellowPrint, ofColor::white, ofColor::black);
 		}
@@ -466,7 +476,7 @@ void testApp::drawRenderMode() {
 		intrinsics.loadProjectionMatrix(10, 2000);
 		applyMatrix(modelMatrix);
 		render();
-		if(getb("setupMode")) {
+		if(setupMode) {
 			imageMesh = getProjectedMesh(objectMesh);
 		}
 	}
@@ -476,7 +486,7 @@ void testApp::drawRenderMode() {
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	
-	if(getb("setupMode")) {
+	if(setupMode) {
 		// draw all reference points cyan
 		int n = referencePoints.size();
 		for(int i = 0; i < n; i++) {
@@ -487,8 +497,8 @@ void testApp::drawRenderMode() {
 		
 		// move points that need to be dragged
 		// draw selected yellow
-		int choice = geti("selectionChoice");
-		if(getb("selected")) {
+		int choice = selectionChoice;
+		if(selectedVert) {
 			referencePoints[choice] = true;
 			Point2f& cur = imagePoints[choice];
 			if(cur == Point2f()) {
@@ -499,14 +509,14 @@ void testApp::drawRenderMode() {
 				}
 			}
 		}
-		if(getb("dragging")) {
+		if(dragging) {
 			Point2f& cur = imagePoints[choice];
-			float rate = ofGetMousePressed(0) ? getf("slowLerpRate") : getf("fastLerpRate");
+			float rate = ofGetMousePressed(0) ? slowLerpRate : fastLerpRate;
 			cur = Point2f(ofLerp(cur.x, mouseX, rate), ofLerp(cur.y, mouseY, rate));
 			drawLabeledPoint(choice, toOf(cur), yellowPrint, ofColor::white, ofColor::black);
 			ofSetColor(ofColor::black);
 			ofRect(toOf(cur), 1, 1);
-		} else if(getb("arrowing")) {
+		} else if(arrowing) {
 			Point2f& cur = imagePoints[choice];
 			drawLabeledPoint(choice, toOf(cur), yellowPrint, ofColor::white, ofColor::black);
 			ofSetColor(ofColor::black);
@@ -516,23 +526,55 @@ void testApp::drawRenderMode() {
 			// draw hover magenta
 			float distance;
 			ofVec2f selected = toOf(getClosestPoint(imagePoints, mouseX, mouseY, &choice, &distance));
-			if(!ofGetMousePressed() && referencePoints[choice] && distance < getf("selectionRadius")) {
-				seti("hoverChoice", choice);
-				setb("hoverSelected", true);
+			if(!ofGetMousePressed() && referencePoints[choice] && distance < selectionRadius) {
+				hoverChoice = choice;
+                hoverSelected = true;
 				drawLabeledPoint(choice, selected, magentaPrint);
 			} else {
-				setb("hoverSelected", false);
+				hoverSelected = false;
 			}
 		}
 	}
 }
-
+//------------------------------------------------------------ GUI
+void testApp::facesPressed(bool & pressed){ 
+    if (pressed){
+        drawMode = 0;
+        fullWireframe.value = false;
+        outlineWireframe.value = false;
+        occludedWireframe.value = false; 
+    }
+}
+void testApp::fullWireframePressed(bool & pressed){
+    if (pressed){
+        drawMode = 1;
+        faces.value = false;
+        outlineWireframe.value = false;
+        occludedWireframe.value = false; 
+    }
+}
+void testApp::outlineWireframePressed(bool & pressed){
+    if (pressed){
+        drawMode = 2;
+        fullWireframe.value = false;
+        faces.value = false;
+        occludedWireframe.value = false; 
+    }
+}
+void testApp::occludedWireframePressed(bool & pressed){
+    if (pressed){
+        drawMode = 3;
+        fullWireframe.value = false;
+        outlineWireframe.value = false;
+        faces.value = false; 
+    }
+}
 //------------------------------------------------------------ EVENT
 
 void testApp::keyPressed(int key) {
 	if(key == OF_KEY_LEFT || key == OF_KEY_UP || key == OF_KEY_RIGHT|| key == OF_KEY_DOWN){
-		int choice = geti("selectionChoice");
-		setb("arrowing", true);
+		int choice = selectionChoice;
+        arrowing = true;
 		if(choice > 0){
 			Point2f& cur = imagePoints[choice];
 			switch(key) {
@@ -543,53 +585,41 @@ void testApp::keyPressed(int key) {
 			}
 		}
 	} else {
-		setb("arrowing",false);
+		arrowing = false;
 	}
 	if(key == OF_KEY_BACKSPACE) { // delete selected
-		if(getb("selected")) {
-			setb("selected", false);
-			int choice = geti("selectionChoice");
+		if(selectedVert) {
+			selectedVert = false;
+			int choice = selectionChoice;
 			referencePoints[choice] = false;
 			imagePoints[choice] = Point2f();
 		}
 	}
 	if(key == '\n') { // deselect
-		setb("selected", false);
+		selectedVert = false;
 	}
 	if(key == ' ') { // toggle render/select mode
-		setb("selectionMode", !getb("selectionMode"));
+        selectionMode = !selectionMode;
 	}
-}
-
-//----------------------------------------------- GUI
-
-void testApp::setb(string name, bool value) {
-	panel.setValueB(name, value);
-}
-void testApp::seti(string name, int value) {
-	panel.setValueI(name, value);
-}
-void testApp::setf(string name, float value) {
-	panel.setValueF(name, value);
-}
-bool testApp::getb(string name) {
-	return panel.getValueB(name);
-}
-int testApp::geti(string name) {
-	return panel.getValueI(name);
-}
-float testApp::getf(string name) {
-	return panel.getValueF(name);
+    if(key == 'f'){
+        ofToggleFullscreen();
+    }
+    if(key == 's') {
+		gui.saveToFile("settings.xml");
+	}
+	if(key == 'l') {
+		gui.loadFromFile("settings.xml");
+	}
 }
 
 void testApp::mousePressed(int x, int y, int button) {
-	setb("selected", getb("hoverSelected"));
-	seti("selectionChoice", geti("hoverChoice"));
-	if(getb("selected")) {
-		setb("dragging", true);
+	selectedVert = hoverSelected;
+	selectionChoice = hoverChoice;
+	if(selectedVert) {
+        dragging = true;
 	}
 }
 
 void testApp::mouseReleased(int x, int y, int button) {
-	setb("dragging", false);
+	dragging = false;
 }

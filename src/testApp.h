@@ -7,8 +7,9 @@
 #include "ofxCv.h"
 
 #include "ofxProCamToolkit.h"
-#include "ofxAutoControlPanel.h"
 #include "LineArt.h"
+
+#include "ofxGui.h"
 
 class testApp : public ofBaseApp {
 public:
@@ -25,16 +26,13 @@ public:
 	void mousePressed(int x, int y, int button);
 	void mouseReleased(int x, int y, int button);
 	
+    void facesPressed(bool & pressed);
+    void fullWireframePressed(bool & pressed);
+    void outlineWireframePressed(bool & pressed);
+    void occludedWireframePressed(bool & pressed);
     //  GUI
     //  --------------------------------
 	void    setupControlPanel();
-    void    setb(string name, bool value);
-	void    seti(string name, int value);
-	void    setf(string name, float value);
-	bool    getb(string name);
-	int     geti(string name);
-	float   getf(string name);
-	ofxAutoControlPanel panel;
 	
 	void drawLabeledPoint(int label, ofVec2f position, ofColor color, ofColor bg = ofColor::black, ofColor fg = ofColor::white);
 	void updateRenderMode();
@@ -61,4 +59,17 @@ public:
     string  modelFile;
 	Poco::Timestamp lastFragTimestamp, lastVertTimestamp;
 	ofShader shader;
+    
+    // natxo 
+
+    bool cvCALIB_FIX_ASPECT_RATIO, cvCALIB_FIX_K1, cvCALIB_FIX_K2, cvCALIB_FIX_K3, cvCALIB_ZERO_TANGENT_DIST, cvCALIB_FIX_PRINCIPAL_POINT;
+    int drawMode;
+    
+    ofxPanel gui;
+    ofxToggle setupMode, savecalibration, highlight, useSmoothing, randomLighting, useLights, faces, fullWireframe, outlineWireframe, occludedWireframe, useShader;
+    ofxFloatSlider scale,  highlightPosition, highlightOffset, lightX, lightY, lightZ, slowLerpRate, fastLerpRate;
+    ofxIntSlider lineWidth, backGroundColor, screenPointSize, selectedPointSize, selectionRadius, aov;
+    
+    int hoverChoice, selectionChoice;
+    bool validShader, selectionMode, hoverSelected, selectedVert, dragging, arrowing;
 };
