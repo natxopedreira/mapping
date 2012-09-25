@@ -1,0 +1,4 @@
+mapping
+=======
+
+version de mapamoko
