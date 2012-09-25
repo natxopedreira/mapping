@@ -267,12 +267,11 @@ void testApp::updateRenderMode() {
 //#define getFlag(flag) (panel.getValueB((#flag)) ? flag : 0)
 	int flags =
     CV_CALIB_USE_INTRINSIC_GUESS |
-    cvCALIB_FIX_PRINCIPAL_POINT |
-    cvCALIB_FIX_ASPECT_RATIO |
-    cvCALIB_FIX_K1 |
-    cvCALIB_FIX_K2 |
-    cvCALIB_FIX_K3 |
-    cvCALIB_ZERO_TANGENT_DIST;
+    CV_CALIB_FIX_PRINCIPAL_POINT |
+    CV_CALIB_FIX_ASPECT_RATIO |
+    CV_CALIB_FIX_K1 |
+    CV_CALIB_FIX_K2 |
+    CV_CALIB_FIX_K3 ;
     
 	
 	vector<Mat> rvecs, tvecs;
