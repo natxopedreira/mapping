@@ -11,7 +11,7 @@ void testApp::setup() {
 	
     //  Load Mesh
     //
-	loadMesh("model.dae");
+	loadMesh("EscenarioEleccionesNacho_centrada.obj");
     
     //  Video ( temporal, just for getting a texture that change )
     //
