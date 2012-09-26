@@ -317,10 +317,10 @@ void testApp::update() {
 	light.setPosition(lightX,lightY, lightZ);
 		
 	if(selectionMode) {
-		//cam.enableMouseInput();
+		cam.enableMouseInput();
 	} else {
 		updateRenderMode();
-		//cam.disableMouseInput();
+		cam.disableMouseInput();
 	}
 }
 
