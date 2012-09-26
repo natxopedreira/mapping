@@ -8,6 +8,15 @@ This is a mappingTool based on [Kyle McDonald's](http://kylemcdonald.net/) softw
 ##Addons
 
 - ofxGui (native)
+
+- ofxOpenCv (native)
+
 - ofxXmlSettings (native)
-- [ofxCV](https://github.com/kylemcdonald/ofxCv) 
+
+- ofxAssimpModelLoader (native)
+
+- [ofxCV](https://github.com/kylemcdonald/ofxCv)
+
+- [ofxControlPanel](https://github.com/kylemcdonald/ofxControlPanel)
+
 - [ofxGrabCam](https://github.com/elliotwoods/ofxGrabCam)
