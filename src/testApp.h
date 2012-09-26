@@ -10,11 +10,14 @@
 //  Non native addons
 //
 #include "ofxCv.h"
+#include "ofxOsc.h"
 
 //  Other classes and methots
 //
 #include "LineArt.h"
 #include "ofxProCamToolkit.h"
+
+#define PORT 12345
 
 class testApp : public ofBaseApp {
 public:
@@ -63,6 +66,8 @@ public:
     string  modelFile;
 	Poco::Timestamp lastFragTimestamp, lastVertTimestamp;
 	ofShader shader;
+    
+    ofxOscReceiver  oscReceiver;
     
     //  GUI
     //

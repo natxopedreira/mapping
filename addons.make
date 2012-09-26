@@ -1,6 +1,5 @@
 ofxAssimpModelLoader
-ofxControlPanel
 ofxCv
-ofxGrabCam
-ofxOpenCv
+ofxGui
+ofxOsc
 ofxXmlSettings

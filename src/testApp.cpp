@@ -77,6 +77,9 @@ void testApp::setup() {
     cvCALIB_FIX_K3 = true;
     cvCALIB_ZERO_TANGENT_DIST = true;
     cvCALIB_FIX_PRINCIPAL_POINT = false;
+    
+    // OSC
+    oscReceiver.setup(PORT);
 }
 
 void testApp::loadMesh(string _daeModel){
@@ -233,6 +236,78 @@ void testApp::update() {
     ofSetWindowTitle("mapamok");
     
     video.update();
+    
+    //OSC
+    while(oscReceiver.hasWaitingMessages()){
+        
+		//  Get the next message
+        //
+		ofxOscMessage m;
+		oscReceiver.getNextMessage(&m);
+        cout << m.getAddress() << endl;
+        
+        if(m.getAddress()=="/mapamoko/scale/"){
+            scale = m.getArgAsFloat(0);
+        }else if(m.getAddress()=="/mapamoko/backgroundColor/"){
+            backGroundColor = m.getArgAsInt32(0);
+        }else if(m.getAddress()=="/mapamoko/faces/"){
+            if(m.getArgAsInt32(0) == 1) drawMode = 0;
+        }else if(m.getAddress()=="/mapamoko/fullWireframe/"){
+            if(m.getArgAsInt32(0) == 1) drawMode = 1;
+        }else if(m.getAddress()=="/mapamoko/outlineWireframe/"){
+            if(m.getArgAsInt32(0) == 1) drawMode = 2;
+        }else if(m.getAddress()=="/mapamoko/occludedWireframe/"){
+            if(m.getArgAsInt32(0) == 1) drawMode = 3;
+        }else if(m.getAddress()=="/mapamoko/shader/"){
+            useShader = m.getArgAsInt32(0);
+        }else if(m.getAddress()=="/mapamoko/highlight/"){
+            highlight = m.getArgAsInt32(0);
+        }else if(m.getAddress()=="/mapamoko/highlightPosition/"){
+            highlightPosition = m.getArgAsFloat(0);
+        }else if(m.getAddress()=="/mapamoko/highlightOffset/"){
+            highlightPosition = m.getArgAsFloat(0);
+        }else if(m.getAddress()=="/mapamoko/slowLerpRate/"){
+            slowLerpRate = m.getArgAsFloat(0);
+        }else if(m.getAddress()=="/mapamoko/fastLerpRate/"){
+            fastLerpRate = m.getArgAsFloat(0);
+        }else if(m.getAddress()=="/mapamoko/lineWidth/"){
+            lineWidth = m.getArgAsInt32(0);
+        }else if(m.getAddress()=="/mapamoko/useSmoothing/"){
+            useSmoothing = m.getArgAsInt32(0);
+        }else if(m.getAddress()=="/mapamoko/aov/"){
+            aov = m.getArgAsInt32(0);
+        }else if(m.getAddress()=="/mapamoko/cv_calib_fix_aspect_ratio/"){
+            cvCALIB_FIX_ASPECT_RATIO = m.getArgAsInt32(0);
+        }else if(m.getAddress()=="/mapamoko/cv_calib_fix_k1/"){
+            cvCALIB_FIX_K1 = m.getArgAsInt32(0);
+        }else if(m.getAddress()=="/mapamoko/cv_calib_fix_k2/"){
+            cvCALIB_FIX_K2 = m.getArgAsInt32(0);
+        }else if(m.getAddress()=="/mapamoko/cv_calib_fix_k3/"){
+            cvCALIB_FIX_K3 = m.getArgAsInt32(0);
+        }else if(m.getAddress()=="/mapamoko/cv_calib_zero_tangent_dist/"){
+            cvCALIB_ZERO_TANGENT_DIST = m.getArgAsInt32(0);
+        }else if(m.getAddress()=="/mapamoko/cv_calib_fix_principal_point/"){
+            cvCALIB_FIX_PRINCIPAL_POINT = m.getArgAsInt32(0);
+        }else if(m.getAddress()=="/mapamoko/setupMode/"){
+            setupMode = m.getArgAsInt32(0);
+        }else if(m.getAddress()=="/mapamoko/screenPointSize/"){
+            screenPointSize = m.getArgAsInt32(0);
+        }else if(m.getAddress()=="/mapamoko/selectedPointSize/"){
+            selectedPointSize = m.getArgAsInt32(0);
+        }else if(m.getAddress()=="/mapamoko/selectionRadius/"){
+            selectionRadius = m.getArgAsInt32(0);
+        }else if(m.getAddress()=="/mapamoko/randomLighting/"){
+            randomLighting = m.getArgAsInt32(0);
+        }else if(m.getAddress()=="/mapamoko/lightX/"){
+            lightX = m.getArgAsFloat(0);
+        }else if(m.getAddress()=="/mapamoko/lightY/"){
+            lightY = m.getArgAsFloat(0);
+        }else if(m.getAddress()=="/mapamoko/lightZ/"){
+            lightZ = m.getArgAsFloat(0);
+        }else if(m.getAddress()=="/mapamoko/useLights/"){
+            useLights = m.getArgAsInt32(0);
+        }
+    }
     
     if(randomLighting) {
         lightX = ofSignedNoise(ofGetElapsedTimef(), 1, 1) * 1000;
