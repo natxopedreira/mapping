@@ -7,40 +7,18 @@ using namespace cv;
 void testApp::setup() {
 	ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL_BILLBOARD);
     ofEnableAlphaBlending();
-    
 	ofSetVerticalSync(true);
-	calibrationReady = false;
+	
+    //  Load Mesh
+    //
+	loadMesh("model.dae");
     
-	loadMesh("EscenarioEleccionesNacho.obj");
-    
-	setupControlPanel();
-    
+    //  Video ( temporal, just for getting a texture that change )
+    //
     video.initGrabber(640,480);
     
-    validShader = true;
-    selectionMode = true;
-    hoverSelected = false;
-    selectedVert = false;
-    dragging = false;
-    arrowing = false;
-    
-    fullWireframe = false;
-    outlineWireframe = false;
-    occludedWireframe = true;
-    
-    cvCALIB_FIX_ASPECT_RATIO = true;
-    cvCALIB_FIX_K1 = true;
-    cvCALIB_FIX_K2 = true;
-    cvCALIB_FIX_K3 = true;
-    cvCALIB_ZERO_TANGENT_DIST = true;
-    cvCALIB_FIX_PRINCIPAL_POINT = false;
-}
-
-
-
-void testApp::setupControlPanel() {
-    
-    ///////////
+    //  GUI
+    //
     gui.setup("controles");
     gui.add(setupMode.setup("setupMode", true));
     gui.add(savecalibration.setup("savecalibration", false));
@@ -52,12 +30,11 @@ void testApp::setupControlPanel() {
     gui.add(useShader.setup("useShader", false));
     gui.add(verEjes.setup("verEjes", true));
     
-    
-    
     gui.add(faces.setup("faces", false));
     gui.add(fullWireframe.setup("fullWireframe", false));
     gui.add(outlineWireframe.setup("outlineWireframe", false));
     gui.add(occludedWireframe.setup("occludedWireframe", true));
+    
     faces.addListener(this,&testApp::facesPressed);
     fullWireframe.addListener(this,&testApp::fullWireframePressed);
     outlineWireframe.addListener(this,&testApp::outlineWireframePressed);
@@ -78,9 +55,29 @@ void testApp::setupControlPanel() {
     
     gui.add(slowLerpRate.setup("slowLerpRate", .001, 0, .01));
     gui.add(fastLerpRate.setup("fastLerpRate", 1., 0, 1.));
-
+    
+    //  Flags
+    //
+    calibrationReady = false;
+    
+    validShader = true;
+    selectionMode = true;
+    hoverSelected = false;
+    selectedVert = false;
+    dragging = false;
+    arrowing = false;
+    
+    fullWireframe = false;
+    outlineWireframe = false;
+    occludedWireframe = true;
+    
+    cvCALIB_FIX_ASPECT_RATIO = true;
+    cvCALIB_FIX_K1 = true;
+    cvCALIB_FIX_K2 = true;
+    cvCALIB_FIX_K3 = true;
+    cvCALIB_ZERO_TANGENT_DIST = true;
+    cvCALIB_FIX_PRINCIPAL_POINT = false;
 }
-
 
 void testApp::loadMesh(string _daeModel){
     ofxAssimpModelLoader model;

@@ -2,14 +2,19 @@
 
 #include "ofMain.h"
 
+//  Native addons
+//
+#include "ofxGui.h"
 #include "ofxAssimpModelLoader.h"
 
+//  Non native addons
+//
 #include "ofxCv.h"
 
-#include "ofxProCamToolkit.h"
+//  Other classes and methots
+//
 #include "LineArt.h"
-
-#include "ofxGui.h"
+#include "ofxProCamToolkit.h"
 
 class testApp : public ofBaseApp {
 public:
@@ -32,9 +37,6 @@ public:
     void occludedWireframePressed(bool & pressed);
     void drawGrid(float scale, float ticks, bool labels, bool x, bool y, bool z);
     void drawGridPlane(float scale, float ticks, bool labels);
-    //  GUI
-    //  --------------------------------
-	void    setupControlPanel();
 	
 	void drawLabeledPoint(int label, ofVec2f position, ofColor color, ofColor bg = ofColor::black, ofColor fg = ofColor::white);
 	void updateRenderMode();
@@ -62,16 +64,16 @@ public:
 	Poco::Timestamp lastFragTimestamp, lastVertTimestamp;
 	ofShader shader;
     
-    // natxo 
-
-    bool cvCALIB_FIX_ASPECT_RATIO, cvCALIB_FIX_K1, cvCALIB_FIX_K2, cvCALIB_FIX_K3, cvCALIB_ZERO_TANGENT_DIST, cvCALIB_FIX_PRINCIPAL_POINT;
-    int drawMode;
-    
+    //  GUI
+    //
     ofxPanel gui;
     ofxToggle setupMode, savecalibration, highlight, useSmoothing, randomLighting, useLights, faces, fullWireframe, outlineWireframe, occludedWireframe, useShader, verEjes;
     ofxFloatSlider scale,  highlightPosition, highlightOffset, lightX, lightY, lightZ, slowLerpRate, fastLerpRate;
     ofxIntSlider lineWidth, backGroundColor, screenPointSize, selectedPointSize, selectionRadius, aov;
     
+    int drawMode;
     int hoverChoice, selectionChoice;
+    
     bool validShader, selectionMode, hoverSelected, selectedVert, dragging, arrowing;
+    bool cvCALIB_FIX_ASPECT_RATIO, cvCALIB_FIX_K1, cvCALIB_FIX_K2, cvCALIB_FIX_K3, cvCALIB_ZERO_TANGENT_DIST, cvCALIB_FIX_PRINCIPAL_POINT;
 };
