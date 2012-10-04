@@ -26,15 +26,15 @@ void main() {
 		gl_FragColor = vec4(mod(elapsedTime + position / 100., 1.) * sin(mod(elapsedTime * 4., TWO_PI)), 1.);
 	} else if(stage < 3.) {
 		// fast rising stripes
-		//if(normal.z == 0.) {
+		if(normal.z == 0.) {
 			const float speed = 200.;
 			const float scale = 50.;
 			gl_FragColor = 
 				(mod((-position.z) + (elapsedTime * speed), scale) < (scale / 2.)) ?
 				on : off;
-		/*} else {
+		} else {
 			gl_FragColor = off;
-		}*/
+		}
 	} else if(stage < 5.) {
 		// crazy triangles, grid lines
 		float speed = 10.;
