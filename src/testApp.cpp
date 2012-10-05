@@ -10,53 +10,43 @@ void testApp::setup(){
     
     webCamera.initGrabber(textWidth, textHeight);
     
-    mapamoko.loadMesh("cubos_demo.dae", textWidth, textHeight);
-    mapamoko.viewport.x = 0;
-    mapamoko.viewport.y = 0;
-    mapamoko.viewport.width = 640;
-    mapamoko.viewport.height = 480;
-    mapamoko.drawMode = 3;
-    mapamoko.useSmoothing = true;
-    mapamoko.faceColor.set(80, 80, 80, 255);
-   // mapamoko.loadShader("shader");
+    mapamoko01.loadSettings("viewport01.xml");
+    mapamoko01.loadMesh("cubos_demo.dae", textWidth, textHeight);
+    mapamoko01.drawMode = 3;
+    mapamoko01.useSmoothing = true;
+    mapamoko01.faceColor.set(80, 80, 80, 255);
     
-    mapamoko2.loadMesh("cubos_demo.dae", textWidth, textHeight);
-    mapamoko2.viewport.x = 640;
-    mapamoko2.viewport.y = 0;
-    mapamoko2.viewport.width = 640;
-    mapamoko2.viewport.height = 480;
-    mapamoko2.drawMode = 3;
-    mapamoko2.useSmoothing = true;
-    mapamoko2.faceColor.set(80, 80, 80, 255);
-   // mapamoko2.loadShader("shader");
+    mapamoko02.loadSettings("viewport02.xml");
+    mapamoko02.loadMesh("cubos_demo.dae", textWidth, textHeight);
+    mapamoko02.drawMode = 3;
+    mapamoko02.useSmoothing = true;
+    mapamoko02.faceColor.set(80, 80, 80, 255);
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
     webCamera.update();
-    mapamoko.update();
-    mapamoko2.update();
+    
+    mapamoko01.update();
+    mapamoko02.update();
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
-    mapamoko.draw(webCamera.getTextureReference());
-    mapamoko2.draw(webCamera.getTextureReference());
+    mapamoko01.draw(webCamera.getTextureReference());
+    mapamoko02.draw(webCamera.getTextureReference());
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-    mapamoko._keyPressed(key);
-    mapamoko2._keyPressed(key);
+    if(key == 'f'){
+        ofToggleFullscreen();
+    }
 }
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-    mapamoko._mousePressed(x, y, button);
-    mapamoko2._mousePressed(x, y, button);
 }
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
-    mapamoko._mouseReleased(x, y, button);
-    mapamoko2._mouseReleased(x, y, button);
 }

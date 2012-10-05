@@ -3,6 +3,7 @@
 #include "ofMain.h"
 
 #include "ofxMapamok.h"
+#include "ofxSmartViewPort.h"
 
 class testApp : public ofBaseApp{
 public:
@@ -10,14 +11,15 @@ public:
     void update();
     void draw();
 
-    void keyPressed  (int key);
+    void keyPressed(int key);
     void mousePressed(int x, int y, int button);
     void mouseReleased(int x, int y, int button);
     
-    ofxMapamok mapamoko, mapamoko2;
+    ofxMapamok      mapamoko01;
+    ofxMapamok      mapamoko02;
     
-    ofVideoGrabber webCamera;
+    ofVideoGrabber  webCamera;
     
-    int textWidth, textHeight;
-		
+    int             textWidth,
+                    textHeight;
 };
