@@ -17,6 +17,8 @@ This is a mappingTool based on [Kyle McDonald's](http://kylemcdonald.net/) softw
 
 - [ofxCV](https://github.com/kylemcdonald/ofxCv)
 
-- [ofxControlPanel](https://github.com/kylemcdonald/ofxControlPanel)
+- [ofxMapaMok](https://github.com/natxopedreira/ofxMapamok)
 
-- [ofxGrabCam](https://github.com/elliotwoods/ofxGrabCam)
+- [ofxMapaObj](https://github.com/natxopedreira/ofxMapaObj) how need's [ofxFX](https://github.com/patriciogonzalezvivo/ofxFX)
+
+
