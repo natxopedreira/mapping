@@ -15,8 +15,8 @@ public:
     void mousePressed(int x, int y, int button);
     void mouseReleased(int x, int y, int button);
     
-    ofxMapamok      mapamoko01;
-    ofxMapamok      mapamoko02;
+    ofxMapaMok      mapamoko01;
+    ofxMapaMok      mapamoko02;
     
     ofVideoGrabber  webCamera;
     
