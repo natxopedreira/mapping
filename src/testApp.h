@@ -20,6 +20,8 @@ public:
     
     ofVideoGrabber  webCamera;
     
+    ofShader        shader;
+    
     int             textWidth,
                     textHeight;
 };

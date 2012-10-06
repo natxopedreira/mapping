@@ -12,14 +12,13 @@ void testApp::setup(){
     
     mapamoko01.loadSettings("viewport01.xml");
     mapamoko01.loadMesh("cubos_demo.dae", textWidth, textHeight);
-    mapamoko01.drawMode = 0;
-    mapamoko01.useSmoothing = true;
+    mapamoko01.drawMode = DRAW_FACES;
+    //mapamoko01.useSmoothing = true;
     mapamoko01.faceColor.set(80, 80, 80, 255);
     
     mapamoko02.loadSettings("viewport02.xml");
     mapamoko02.loadMesh("cubos_demo.dae", textWidth, textHeight);
-    mapamoko02.drawMode = 3;
-    mapamoko02.useSmoothing = true;
+    //mapamoko02.useSmoothing = true;
     mapamoko02.faceColor.set(80, 80, 80, 255);
 }
 
