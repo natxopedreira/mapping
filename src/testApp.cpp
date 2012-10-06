@@ -2,6 +2,7 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
+    ofEnableSmoothing();
     ofEnableAlphaBlending();
     ofBackground(0, 0, 0);
     
@@ -13,13 +14,13 @@ void testApp::setup(){
     mapamoko01.loadSettings("viewport01.xml");
     mapamoko01.loadMesh("cubos_demo.dae", textWidth, textHeight);
     mapamoko01.drawMode = DRAW_FACES;
-    //mapamoko01.useSmoothing = true;
-    mapamoko01.faceColor.set(80, 80, 80, 255);
     
     mapamoko02.loadSettings("viewport02.xml");
     mapamoko02.loadMesh("cubos_demo.dae", textWidth, textHeight);
-    //mapamoko02.useSmoothing = true;
-    mapamoko02.faceColor.set(80, 80, 80, 255);
+    
+    if (shader.load("shader")){
+        mapamoko02.linkShader(&shader);
+    }
 }
 
 //--------------------------------------------------------------
@@ -28,12 +29,14 @@ void testApp::update(){
     
     mapamoko01.update();
     mapamoko02.update();
+    
+    ofSetWindowTitle(ofToString(ofGetFrameRate()));
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
-    mapamoko01.draw(webCamera.getTextureReference());
-    mapamoko02.draw(webCamera.getTextureReference());
+    mapamoko01.draw( &webCamera.getTextureReference());
+    mapamoko02.draw();
 }
 
 //--------------------------------------------------------------
