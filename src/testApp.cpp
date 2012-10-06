@@ -35,7 +35,7 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-    mapamoko01.draw( &webCamera.getTextureReference());
+    mapamoko01.draw( &webCamera.getTextureReference() );
     mapamoko02.draw();
 }
 
